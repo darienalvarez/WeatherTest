@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">Weather</string>
+
+    <string name="welcome">Welcome to your weather info app</string>
+    <string name="name">Name</string>
+    <string name="zip_code">Zip code</string>
+    <string name="save_user_preferences">Save user preferences</string>
+    <string name="weather_info">Weather info</string>
+    <string name="update_info">Update</string>
+    <string name="no_connection">There is not an Internet connection, do you want to enable it?</string>
+    <string name="title_no_connection">Internet connection missing</string>
+    <string name="settings">Settings</string>
+    <string name="cancel">Cancel</string>
+    <string name="ok">OK</string>
+    <string name="error">Error</string>
+    <string name="error_get_location">Invalid zip code, there is no any city related</string>
+    <string name="info">Info</string>
+
+
+</resources>
