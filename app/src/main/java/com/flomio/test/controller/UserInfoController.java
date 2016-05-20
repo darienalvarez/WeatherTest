@@ -18,7 +18,7 @@ import com.flomio.test.util.SharedPreferencesHelper;
  */
 public class UserInfoController {
 
-    private UserInfoActivity context;
+    private final UserInfoActivity context;
 
     public UserInfoController(UserInfoActivity context) {
         this.context = context;

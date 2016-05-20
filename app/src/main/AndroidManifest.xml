@@ -14,7 +14,7 @@
         <activity
             android:name="com.flomio.test.UserInfoActivity"
             android:label="@string/activity_user_info">
-            <intent-filter>
+            <intent-filter android:label="@string/app_name">
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -22,6 +22,7 @@
         </activity>
         <activity
             android:name="com.flomio.test.WeatherInfoActivity"
+            android:windowSoftInputMode="stateHidden"
             android:label="@string/activity_weather_info" />
     </application>
 

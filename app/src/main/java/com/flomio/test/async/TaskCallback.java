@@ -1,7 +1,5 @@
 package com.flomio.test.async;
 
-import android.app.ProgressDialog;
-
 /**
  * Created by Darien
  * on 5/19/16.
@@ -9,8 +7,6 @@ import android.app.ProgressDialog;
  * Represent a callback for an Async Task
  */
 public interface TaskCallback<T> {
-
-    ProgressDialog findProgressDialog();
 
     void onSuccess(T result);
 

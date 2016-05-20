@@ -1,10 +1,7 @@
 package com.flomio.test;
 
-import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
-import android.support.v4.app.FragmentManager;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -17,6 +14,7 @@ import android.widget.TextView;
 import com.flomio.test.async.LoadForecastTask;
 import com.flomio.test.async.TaskCallback;
 import com.flomio.test.controller.WeatherInfoController;
+import com.flomio.test.exception.RequestExceededException;
 import com.flomio.test.networking.dto.Forecast;
 import com.flomio.test.networking.dto.Location;
 import com.flomio.test.networking.dto.Weather;
@@ -29,7 +27,7 @@ import com.flomio.test.view.adapter.ForecastAdapter;
 import java.util.ArrayList;
 
 
-public class WeatherInfoActivity extends AppCompatActivity implements TaskCallback<Weather> {
+public class WeatherInfoActivity extends BaseActivity implements TaskCallback<Weather> {
 
     private static final String TAG_TASK_FRAGMENT = "forecast_async_task";
 
@@ -37,15 +35,11 @@ public class WeatherInfoActivity extends AppCompatActivity implements TaskCallba
     private TextInputEditText mZipCodeEditText;
     private RecyclerView mRecyclerView;
 
-    private ProgressDialog mProgressDialog;
-    private TaskFragment mTaskFragment;
-
     private WeatherInfoController mController;
-    private FragmentManager mFragmentManager;
+
     private Weather mWeather;
     private String mName;
     private String mZipCode;
-    private ValidatorHelper mValidatorHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,8 +59,6 @@ public class WeatherInfoActivity extends AppCompatActivity implements TaskCallba
             Location location = getIntent().getParcelableExtra(BundleConstant.LOCATION);
             mWeather = new Weather(location, new ArrayList<Forecast>());
         }
-
-        mProgressDialog = DialogHelper.buildProgressDialog(WeatherInfoActivity.this);
 
         TextView weatherInfoTextView = (TextView) findViewById(R.id.weatherInfoTextView);
         if (weatherInfoTextView != null) {
@@ -98,6 +90,16 @@ public class WeatherInfoActivity extends AppCompatActivity implements TaskCallba
         this.mTaskFragment = (TaskFragment) mFragmentManager.findFragmentByTag(TAG_TASK_FRAGMENT);
 
         updateRecyclerView(mWeather);
+
+        if (mProgressDialog == null) {
+            mProgressDialog = DialogHelper.buildProgressDialog(WeatherInfoActivity.this);
+        }
+
+        if (mTaskFragment != null && mTaskFragment.isRunning()) {
+            mProgressDialog.show();
+        }
+
+        // run just on first creation
         if (savedInstanceState == null) {
             findForecastByZipCode(mZipCode);
         }
@@ -127,11 +129,6 @@ public class WeatherInfoActivity extends AppCompatActivity implements TaskCallba
     }
 
     @Override
-    public ProgressDialog findProgressDialog() {
-        return mProgressDialog;
-    }
-
-    @Override
     public void onSuccess(Weather result) {
         releaseFragment();
 
@@ -147,12 +144,18 @@ public class WeatherInfoActivity extends AppCompatActivity implements TaskCallba
     public void onError(Throwable e) {
         releaseFragment();
 
-        DialogHelper.showErrorDialog(WeatherInfoActivity.this, R.string.error_get_forecast);
+        if (e instanceof RequestExceededException) {
+            DialogHelper.showErrorDialog(WeatherInfoActivity.this, R.string.error_get_request_exceeded);
+        } else {
+            DialogHelper.showErrorDialog(WeatherInfoActivity.this, R.string.error_get_forecast);
+        }
     }
 
-    private View.OnClickListener updateClick = new View.OnClickListener() {
+    private final View.OnClickListener updateClick = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
+            hideKeyboard(WeatherInfoActivity.this);
+
             if (mValidatorHelper.isValid()) {
                 mZipCode = mZipCodeEditText.getText().toString();
                 findForecastByZipCode(mZipCode);
@@ -164,6 +167,10 @@ public class WeatherInfoActivity extends AppCompatActivity implements TaskCallba
         // If the Fragment is non-null, then it is currently being
         // retained across a configuration change.
         if (mTaskFragment == null || !mTaskFragment.isRunning()) {
+            if (mProgressDialog != null && !mProgressDialog.isShowing()) {
+                mProgressDialog.show();
+            }
+
             mTaskFragment = new TaskFragment<String, Void, Weather>()
                     .addConfiguration(new LoadForecastTask(), new String[]{zipCode});
             mFragmentManager.beginTransaction().replace(R.id.container, mTaskFragment, TAG_TASK_FRAGMENT).commit();
@@ -184,14 +191,4 @@ public class WeatherInfoActivity extends AppCompatActivity implements TaskCallba
         }
     }
 
-    private void releaseFragment() {
-        if (findProgressDialog() != null) {
-            findProgressDialog().dismiss();
-        }
-
-        if (mTaskFragment != null) {
-            mTaskFragment.stopRunning();
-            mTaskFragment = null;
-        }
-    }
 }

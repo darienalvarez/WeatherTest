@@ -10,16 +10,4 @@ public class InvalidRequestException extends NetworkException {
 
     public InvalidRequestException() {
     }
-
-    public InvalidRequestException(String detailMessage) {
-        super(detailMessage);
-    }
-
-    public InvalidRequestException(String detailMessage, Throwable throwable) {
-        super(detailMessage, throwable);
-    }
-
-    public InvalidRequestException(Throwable throwable) {
-        super(throwable);
-    }
 }

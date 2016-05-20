@@ -11,20 +11,10 @@ import android.os.AsyncTask;
 public abstract class AbstractTask<P, G, R> extends AsyncTask<P, G, R> {
 
     private TaskCallback<R> mCallback;
-
-    Exception mException;
-
-    @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
-        if (mCallback.findProgressDialog() != null) {
-            mCallback.findProgressDialog().show();
-        }
-    }
+    protected Exception mException;
 
     @Override
     protected void onCancelled() {
-
         if (mCallback != null) {
             mCallback.onCancelled();
         }

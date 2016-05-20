@@ -13,7 +13,7 @@ import java.util.List;
  */
 public class ValidatorHelper {
 
-    private List<Validation> validations;
+    private final List<Validation> validations;
 
     public ValidatorHelper() {
         this.validations = new ArrayList<>();
@@ -49,9 +49,9 @@ public class ValidatorHelper {
      * Represent a single validation for a field
      */
     private class Validation {
-        private EditText editText;
-        private Validator validator;
-        private String errorMessage;
+        private final EditText editText;
+        private final Validator validator;
+        private final String errorMessage;
 
         public Validation(EditText editText, Validator validator, String errorMessage) {
             this.editText = editText;

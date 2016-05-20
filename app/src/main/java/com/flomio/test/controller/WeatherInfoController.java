@@ -15,7 +15,7 @@ import com.flomio.test.util.SharedPreferencesHelper;
  */
 public class WeatherInfoController {
 
-    private WeatherInfoActivity context;
+    private final WeatherInfoActivity context;
 
     public WeatherInfoController(WeatherInfoActivity context) {
         this.context = context;

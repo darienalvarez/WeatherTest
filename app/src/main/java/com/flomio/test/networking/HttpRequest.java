@@ -99,10 +99,10 @@ public class HttpRequest {
     }
 
     /**
-     * Compute diference in minutes between current and the last stored time
+     * Compute difference in minutes between current and the last stored time
      *
      * @param current current time in millis
-     * @return diference in minutes with the last stored time
+     * @return difference in minutes with the last stored time
      */
     private long differenceInMinutes(long current) {
         synchronized (this) {

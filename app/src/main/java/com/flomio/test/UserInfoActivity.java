@@ -1,16 +1,14 @@
 package com.flomio.test;
 
-import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
-import android.support.v4.app.FragmentManager;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 
 import com.flomio.test.async.LoadLocationTask;
 import com.flomio.test.async.TaskCallback;
 import com.flomio.test.controller.UserInfoController;
+import com.flomio.test.exception.RequestExceededException;
 import com.flomio.test.networking.dto.Location;
 import com.flomio.test.util.ConnectivityHelper;
 import com.flomio.test.util.DialogHelper;
@@ -18,19 +16,14 @@ import com.flomio.test.validation.StringSizeValidator;
 import com.flomio.test.validation.ValidatorHelper;
 import com.flomio.test.view.TaskFragment;
 
-public class UserInfoActivity extends AppCompatActivity implements TaskCallback<Location> {
+public class UserInfoActivity extends BaseActivity implements TaskCallback<Location> {
 
     private static final String TAG_TASK_FRAGMENT = "task_fragment";
 
     private TextInputEditText mNameEditText;
     private TextInputEditText mZipCodeEditText;
 
-    private FragmentManager mFragmentManager;
-    private TaskFragment mTaskFragment;
-
     private UserInfoController mController;
-    private ValidatorHelper mValidatorHelper;
-    private ProgressDialog mProgressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +42,14 @@ public class UserInfoActivity extends AppCompatActivity implements TaskCallback<
             this.mFragmentManager = getSupportFragmentManager();
             this.mTaskFragment = (TaskFragment) mFragmentManager.findFragmentByTag(TAG_TASK_FRAGMENT);
 
+            if (mProgressDialog == null) {
+                mProgressDialog = DialogHelper.buildProgressDialog(UserInfoActivity.this);
+            }
+
+            if (mTaskFragment != null && mTaskFragment.isRunning()) {
+                mProgressDialog.show();
+            }
+
             this.mNameEditText = (TextInputEditText) findViewById(R.id.nameEditText);
             this.mZipCodeEditText = (TextInputEditText) findViewById(R.id.zipCodeEditText);
 
@@ -63,11 +64,6 @@ public class UserInfoActivity extends AppCompatActivity implements TaskCallback<
 
             // check internet connection
             checkConnection();
-
-            mProgressDialog = DialogHelper.buildProgressDialog(this);
-            if (mTaskFragment != null && mTaskFragment.isRunning()) {
-                mProgressDialog.show();
-            }
         }
     }
 
@@ -83,7 +79,12 @@ public class UserInfoActivity extends AppCompatActivity implements TaskCallback<
     private final View.OnClickListener saveOnClick = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
+            hideKeyboard(UserInfoActivity.this);
             if (mValidatorHelper.isValid()) {
+                if (mProgressDialog != null && !mProgressDialog.isShowing()) {
+                    mProgressDialog.show();
+                }
+
                 String zipCode = mZipCodeEditText.getText().toString();
                 findLocationByZipCode(zipCode);
             }
@@ -97,17 +98,6 @@ public class UserInfoActivity extends AppCompatActivity implements TaskCallback<
             mTaskFragment = new TaskFragment<String, Void, Location>()
                     .addConfiguration(new LoadLocationTask(), new String[]{zipCode});
             mFragmentManager.beginTransaction().replace(R.id.container, mTaskFragment, TAG_TASK_FRAGMENT).commit();
-        }
-    }
-
-    private void releaseFragment() {
-        if (findProgressDialog() != null) {
-            findProgressDialog().dismiss();
-        }
-
-        if (mTaskFragment != null) {
-            mTaskFragment.stopRunning();
-            mTaskFragment = null;
         }
     }
 
@@ -142,11 +132,10 @@ public class UserInfoActivity extends AppCompatActivity implements TaskCallback<
     public void onError(Throwable e) {
         releaseFragment();
 
-        DialogHelper.showErrorDialog(UserInfoActivity.this, R.string.error_get_location);
-    }
-
-    @Override
-    public ProgressDialog findProgressDialog() {
-        return mProgressDialog;
+        if (e instanceof RequestExceededException) {
+            DialogHelper.showErrorDialog(UserInfoActivity.this, R.string.error_get_request_exceeded);
+        } else {
+            DialogHelper.showErrorDialog(UserInfoActivity.this, R.string.error_get_location);
+        }
     }
 }

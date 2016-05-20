@@ -34,6 +34,7 @@ public class TaskFragment<P, G, R> extends Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
 
+        //noinspection unchecked
         mCallback = (TaskCallback<R>) context;
     }
 
@@ -48,9 +49,12 @@ public class TaskFragment<P, G, R> extends Fragment {
         // Retain this fragment across configuration changes.
         setRetainInstance(true);
 
-        // Execute task
+        // set task parameters
         this.mRunning = true;
         this.mTask.setCallback(mCallback);
+
+        // Execute task
+        //noinspection unchecked
         this.mTask.execute(mParam);
     }
 
