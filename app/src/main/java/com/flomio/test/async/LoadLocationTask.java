@@ -11,7 +11,7 @@ import com.flomio.test.networking.dto.Location;
  *
  * Execute a service request to get a Location
  */
-public class LoadLocationTask<P extends String, G, R extends Location> extends AbstractTask<P, G, R> {
+public class LoadLocationTask extends AbstractTask<String, Void, Location> {
 
     @Override
     protected Location doInBackground(String... param) {

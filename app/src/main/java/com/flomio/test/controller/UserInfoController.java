@@ -13,6 +13,8 @@ import com.flomio.test.util.SharedPreferencesHelper;
 /**
  * Created by Darien
  * on 5/18/16.
+ *
+ * User Info Activity controller
  */
 public class UserInfoController {
 
@@ -52,7 +54,7 @@ public class UserInfoController {
      *
      * @param name     Name of the user
      * @param zipCode  Zip Code of the user
-     * @param location
+     * @param location the location of the zip code include country, state, city
      */
     public void saveUserPreferences(String name, String zipCode, Location location) {
 
@@ -73,7 +75,7 @@ public class UserInfoController {
      *
      * @param name     Default user name
      * @param zipCode  Default user zip code
-     * @param location
+     * @param location the location of the zip code include country, state, city
      */
     public void navigate(String name, String zipCode, Location location) {
         Intent intent = new Intent(context, WeatherInfoActivity.class);
