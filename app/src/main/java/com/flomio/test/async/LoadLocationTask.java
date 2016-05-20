@@ -8,6 +8,8 @@ import com.flomio.test.networking.wu.WeatherServiceImpl;
 /**
  * Created by Darien
  * on 5/19/16.
+ *
+ * Execute a service request to get a Location
  */
 public class LoadLocationTask<P extends String, G, R extends Location> extends AbstractTask<P, G, R> {
 
