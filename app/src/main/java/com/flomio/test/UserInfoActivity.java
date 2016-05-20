@@ -10,7 +10,7 @@ import android.widget.Button;
 
 import com.flomio.test.async.LoadLocationTask;
 import com.flomio.test.async.TaskCallback;
-import com.flomio.test.async.dto.Location;
+import com.flomio.test.networking.dto.Location;
 import com.flomio.test.controller.UserInfoController;
 import com.flomio.test.util.ConnectivityHelper;
 import com.flomio.test.util.DialogHelper;

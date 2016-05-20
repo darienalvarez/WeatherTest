@@ -1,6 +1,6 @@
 package com.flomio.test.async;
 
-import com.flomio.test.async.dto.Location;
+import com.flomio.test.networking.dto.Location;
 import com.flomio.test.exception.WeatherException;
 import com.flomio.test.networking.WeatherService;
 import com.flomio.test.networking.wu.WeatherServiceImpl;

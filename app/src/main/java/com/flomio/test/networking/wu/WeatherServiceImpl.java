@@ -1,20 +1,21 @@
 package com.flomio.test.networking.wu;
 
-import com.flomio.test.async.dto.Location;
 import com.flomio.test.exception.InvalidRequestException;
+import com.flomio.test.networking.dto.Forecast;
+import com.flomio.test.networking.dto.Location;
 import com.flomio.test.exception.InvalidResponseException;
 import com.flomio.test.exception.NetworkException;
+import com.flomio.test.networking.HttpRequest;
 import com.flomio.test.networking.WeatherService;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by darien
@@ -25,40 +26,35 @@ public class WeatherServiceImpl implements WeatherService {
     private static final String BASE_PATH = "http://api.wunderground.com/api/";
     private static final String API_KEY = "e3c2ee7d70ae07ff";
 
-
     @Override
     public Location getLocationByZipCode(String zipCode) throws NetworkException {
-
 
         try {
             String url = BASE_PATH + API_KEY + "/geolookup/q/" + URLEncoder.encode(zipCode, "UTF-8") + ".json";
 
-            HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
-            conn.setUseCaches(true);
-            conn.setConnectTimeout(30000);
-            conn.setReadTimeout(30000);
+            String response = HttpRequest.makeRequest(url);
 
-            int responseCode = conn.getResponseCode();
-            if (responseCode == 200) {
-                String response = "";
-                BufferedReader buffer = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                String s;
-                while ((s = buffer.readLine()) != null) {
-                    response += s;
-                }
-
-                return processResponse(response);
-            } else {
-                throw new InvalidRequestException();
-            }
-        } catch (IOException e) {
-            throw new NetworkException();
-        } catch (JSONException e) {
+            return processLocationResponse(response);
+        }  catch (JSONException e) {
             throw new InvalidResponseException();
+        } catch (UnsupportedEncodingException e) {
+            throw new InvalidRequestException();
         }
     }
 
-    private Location processResponse(String response) throws JSONException {
+    public Forecast getForecastByZipCode(String zipCode) throws NetworkException {
+
+        try {
+            String url = BASE_PATH + API_KEY + "/geolookup/conditions/forecast/q/" + URLEncoder.encode(zipCode, "UTF-8") + ".json";
+
+            String response = HttpRequest.makeRequest(url);
+
+        } catch (UnsupportedEncodingException e) {
+            throw new InvalidRequestException();
+        }
+    }
+
+    private Location processLocationResponse(String response) throws JSONException {
         JSONObject jsonObject = new JSONObject(response);
 
         JSONObject location = jsonObject.optJSONObject("location");
@@ -70,5 +66,24 @@ public class WeatherServiceImpl implements WeatherService {
             return new Location(country, state, city);
         }
         return null;
+    }
+
+    private List<Forecast> processForecastResponse(String response) throws JSONException {
+        JSONObject jsonObject = new JSONObject(response);
+
+        JSONObject forecast = jsonObject.getJSONObject("forecast");
+
+        List<Forecast> forecasts = new ArrayList<>();
+        if (forecast != null) {
+
+            JSONObject forecastDay = forecast.getJSONObject("forecastday");
+            JSONArray forecastDayList = forecastDay.getJSONArray("forecastday");
+            for (int i = 0; i < forecastDayList.length(); i++) {
+                JSONObject currentForecast = forecastDayList.getJSONObject(i);
+                forecasts.add(new Forecast(currentForecast.getString("title"),
+                        currentForecast.getString("fcttext")));
+            }
+        }
+        return forecasts;
     }
 }

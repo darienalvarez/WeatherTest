@@ -7,7 +7,7 @@ import android.text.TextUtils;
 import com.flomio.test.BundleConstant;
 import com.flomio.test.UserInfoActivity;
 import com.flomio.test.WeatherInfoActivity;
-import com.flomio.test.async.dto.Location;
+import com.flomio.test.networking.dto.Location;
 import com.flomio.test.util.SharedPreferencesHelper;
 
 /**

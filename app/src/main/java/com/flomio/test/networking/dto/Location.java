@@ -1,4 +1,4 @@
-package com.flomio.test.async.dto;
+package com.flomio.test.networking.dto;
 
 /**
  * Created by Darien
