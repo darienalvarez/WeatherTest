@@ -1,12 +1,12 @@
 package com.flomio.test.networking.wu;
 
 import com.flomio.test.exception.InvalidRequestException;
-import com.flomio.test.networking.dto.Forecast;
-import com.flomio.test.networking.dto.Location;
 import com.flomio.test.exception.InvalidResponseException;
 import com.flomio.test.exception.NetworkException;
 import com.flomio.test.networking.HttpRequest;
 import com.flomio.test.networking.WeatherService;
+import com.flomio.test.networking.dto.Forecast;
+import com.flomio.test.networking.dto.Location;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -32,8 +32,7 @@ public class WeatherServiceImpl implements WeatherService {
         try {
             String url = BASE_PATH + API_KEY + "/geolookup/q/" + URLEncoder.encode(zipCode, "UTF-8") + ".json";
 
-            String response = HttpRequest.makeRequest(url);
-
+            String response = HttpRequest.getInstance().makeRequest(url);
             return processLocationResponse(response);
         }  catch (JSONException e) {
             throw new InvalidResponseException();
@@ -42,13 +41,15 @@ public class WeatherServiceImpl implements WeatherService {
         }
     }
 
-    public Forecast getForecastByZipCode(String zipCode) throws NetworkException {
+    public List<Forecast> getForecastByZipCode(String zipCode) throws NetworkException {
 
         try {
             String url = BASE_PATH + API_KEY + "/geolookup/conditions/forecast/q/" + URLEncoder.encode(zipCode, "UTF-8") + ".json";
 
-            String response = HttpRequest.makeRequest(url);
-
+            String response = HttpRequest.getInstance().makeRequest(url);
+            return processForecastResponse(response);
+        } catch (JSONException e) {
+            throw new InvalidResponseException();
         } catch (UnsupportedEncodingException e) {
             throw new InvalidRequestException();
         }
