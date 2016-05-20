@@ -1,8 +1,8 @@
 package com.flomio.test.async;
 
-import com.flomio.test.networking.dto.Location;
 import com.flomio.test.exception.WeatherException;
 import com.flomio.test.networking.WeatherService;
+import com.flomio.test.networking.dto.Location;
 import com.flomio.test.networking.wu.WeatherServiceImpl;
 
 /**
@@ -15,11 +15,6 @@ public class LoadLocationTask<P extends String, G, R extends Location> extends A
     protected Location doInBackground(String... param) {
 
         try {
-            try {
-                Thread.sleep(3000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
             WeatherService service = new WeatherServiceImpl();
             return service.getLocationByZipCode(param[0]);
 
