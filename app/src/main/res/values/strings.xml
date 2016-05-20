@@ -16,6 +16,8 @@
     <string name="error_get_location">Invalid zip code, there is no any city related</string>
     <string name="info">Info</string>
     <string name="option_change_zip_code">Change zip code</string>
+    <string name="message_locate">You are located at: %1$s, %2$s.</string>
+    <string name="error_get_forecast">Error getting forecast info</string>
 
 
 </resources>

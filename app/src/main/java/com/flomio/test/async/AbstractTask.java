@@ -10,7 +10,8 @@ import android.os.AsyncTask;
  */
 public abstract class AbstractTask<P, G, R> extends AsyncTask<P, G, R> {
 
-    protected TaskCallback<R> mCallback;
+    private TaskCallback<R> mCallback;
+
     protected Exception mException;
 
     @Override
@@ -48,7 +49,7 @@ public abstract class AbstractTask<P, G, R> extends AsyncTask<P, G, R> {
         }
     }
 
-    public void setCallback(TaskCallback callback) {
+    public void setCallback(TaskCallback<R> callback) {
         this.mCallback = callback;
     }
 }

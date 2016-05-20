@@ -48,9 +48,8 @@ public class DialogHelper {
     public static ProgressDialog showProgressDialog(Context context) {
         ProgressDialog progress = new ProgressDialog(context);
         progress.setMessage("Loading info");
-        progress.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         progress.setIndeterminate(true);
-        progress.setProgress(0);
         return progress;
     }
 

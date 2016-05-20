@@ -63,9 +63,9 @@ public class UserInfoController {
 
         editor.putString(SharedPreferencesHelper.PREFERENCE_NAME, name);
         editor.putString(SharedPreferencesHelper.PREFERENCE_ZIP_CODE, zipCode);
-        editor.putString(SharedPreferencesHelper.PREFERENCE_COUNTRY, location.country);
-        editor.putString(SharedPreferencesHelper.PREFERENCE_STATE, location.state);
-        editor.putString(SharedPreferencesHelper.PREFERENCE_CITY, location.city);
+        editor.putString(SharedPreferencesHelper.PREFERENCE_COUNTRY, location.getCountry());
+        editor.putString(SharedPreferencesHelper.PREFERENCE_STATE, location.getState());
+        editor.putString(SharedPreferencesHelper.PREFERENCE_CITY, location.getCity());
 
         editor.apply();
     }
@@ -81,9 +81,9 @@ public class UserInfoController {
         Intent intent = new Intent(context, WeatherInfoActivity.class);
         intent.putExtra(BundleConstant.NAME, name);
         intent.putExtra(BundleConstant.ZIP_CODE, zipCode);
-        intent.putExtra(BundleConstant.COUNTRY, location.country);
-        intent.putExtra(BundleConstant.STATE, location.state);
-        intent.putExtra(BundleConstant.CITY, location.city);
+        intent.putExtra(BundleConstant.COUNTRY, location.getCountry());
+        intent.putExtra(BundleConstant.STATE, location.getState());
+        intent.putExtra(BundleConstant.CITY, location.getCity());
 
         context.startActivity(intent);
     }

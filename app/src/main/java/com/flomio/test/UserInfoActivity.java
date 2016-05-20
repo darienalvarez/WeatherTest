@@ -10,8 +10,8 @@ import android.widget.Button;
 
 import com.flomio.test.async.LoadLocationTask;
 import com.flomio.test.async.TaskCallback;
-import com.flomio.test.networking.dto.Location;
 import com.flomio.test.controller.UserInfoController;
+import com.flomio.test.networking.dto.Location;
 import com.flomio.test.util.ConnectivityHelper;
 import com.flomio.test.util.DialogHelper;
 import com.flomio.test.validation.StringSizeValidator;
@@ -126,7 +126,7 @@ public class UserInfoActivity extends AppCompatActivity implements TaskCallback<
             // save the user data
             mController.saveUserPreferences(name, zipCode, location);
 
-            String info = "Your are located at: " + location.city + ", " + location.state + ". " + location.country;
+            String info = getResources().getString(R.string.message_locate, location.getCity(), location.getState());
             DialogHelper.showInfoDialog(UserInfoActivity.this, info, new DialogHelper.ActionCallback() {
                 @Override
                 public void execute() {

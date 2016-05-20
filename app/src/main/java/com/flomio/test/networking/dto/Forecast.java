@@ -8,11 +8,19 @@ package com.flomio.test.networking.dto;
  */
 public class Forecast {
 
-    public String day;
-    public String forecast;
+    private String mDay;
+    private String mForecast;
 
     public Forecast(String day, String forecast) {
-        this.day = day;
-        this.forecast = forecast;
+        this.mDay = day;
+        this.mForecast = forecast;
+    }
+
+    public String getDay() {
+        return mDay;
+    }
+
+    public String getForecast() {
+        return mForecast;
     }
 }

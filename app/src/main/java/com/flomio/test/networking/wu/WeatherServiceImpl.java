@@ -77,7 +77,7 @@ public class WeatherServiceImpl implements WeatherService {
         List<Forecast> forecasts = new ArrayList<>();
         if (forecast != null) {
 
-            JSONObject forecastDay = forecast.getJSONObject("forecastday");
+            JSONObject forecastDay = forecast.getJSONObject("txt_forecast");
             JSONArray forecastDayList = forecastDay.getJSONArray("forecastday");
             for (int i = 0; i < forecastDayList.length(); i++) {
                 JSONObject currentForecast = forecastDayList.getJSONObject(i);

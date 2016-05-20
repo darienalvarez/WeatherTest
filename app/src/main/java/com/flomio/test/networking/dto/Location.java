@@ -8,13 +8,25 @@ package com.flomio.test.networking.dto;
  */
 public class Location {
 
-    public String country;
-    public String state;
-    public String city;
+    private String mCountry;
+    private String mState;
+    private String mCity;
 
     public Location(String country, String state, String city) {
-        this.country = country;
-        this.state = state;
-        this.city = city;
+        this.mCountry = country;
+        this.mState = state;
+        this.mCity = city;
+    }
+
+    public String getCountry() {
+        return mCountry;
+    }
+
+    public String getState() {
+        return mState;
+    }
+
+    public String getCity() {
+        return mCity;
     }
 }
