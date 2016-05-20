@@ -19,7 +19,7 @@ import java.util.List;
  */
 public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.ForecastViewHolder> {
 
-    private List<Forecast> mForecasts;
+    private final List<Forecast> mForecasts;
 
     public ForecastAdapter(List<Forecast> forecasts) {
         super();

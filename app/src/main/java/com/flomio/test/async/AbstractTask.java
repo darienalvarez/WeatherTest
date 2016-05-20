@@ -12,7 +12,7 @@ public abstract class AbstractTask<P, G, R> extends AsyncTask<P, G, R> {
 
     private TaskCallback<R> mCallback;
 
-    protected Exception mException;
+    Exception mException;
 
     @Override
     protected void onPreExecute() {

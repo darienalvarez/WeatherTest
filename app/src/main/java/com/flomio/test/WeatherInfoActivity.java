@@ -42,7 +42,6 @@ public class WeatherInfoActivity extends AppCompatActivity implements TaskCallba
 
     private WeatherInfoController mController;
     private FragmentManager mFragmentManager;
-    private ForecastAdapter mAdapter;
     private Weather mWeather;
     private String mName;
     private String mZipCode;
@@ -174,8 +173,8 @@ public class WeatherInfoActivity extends AppCompatActivity implements TaskCallba
     private void updateRecyclerView(Weather data) {
         this.mWeather = data;
 
-        this.mAdapter = new ForecastAdapter(mWeather.getForecastList());
-        this.mRecyclerView.setAdapter(mAdapter);
+        ForecastAdapter adapter = new ForecastAdapter(mWeather.getForecastList());
+        this.mRecyclerView.setAdapter(adapter);
 
         if (mLocationTextView != null && mWeather.getLocation() != null) {
             mLocationTextView.setText(

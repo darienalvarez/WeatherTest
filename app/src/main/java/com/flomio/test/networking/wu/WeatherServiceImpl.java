@@ -35,8 +35,8 @@ public class WeatherServiceImpl implements WeatherService {
         try {
             String url = BASE_PATH + API_KEY + "/geolookup/q/" + URLEncoder.encode(zipCode, "UTF-8") + ".json";
 
-            String response = HttpRequest.getInstance().makeRequest(url);
-            return processLocationResponse(new JSONObject(response));
+            JSONObject response = HttpRequest.getInstance().makeRequest(url);
+            return processLocationResponse(response);
         } catch (JSONException e) {
             throw new InvalidResponseException();
         } catch (UnsupportedEncodingException e) {
@@ -49,8 +49,8 @@ public class WeatherServiceImpl implements WeatherService {
         try {
             String url = BASE_PATH + API_KEY + "/geolookup/conditions/forecast/q/" + URLEncoder.encode(zipCode, "UTF-8") + ".json";
 
-            String response = HttpRequest.getInstance().makeRequest(url);
-            return processWeatherResponse(new JSONObject(response));
+            JSONObject response = HttpRequest.getInstance().makeRequest(url);
+            return processWeatherResponse(response);
         } catch (JSONException e) {
             throw new InvalidResponseException();
         } catch (UnsupportedEncodingException e) {

@@ -25,7 +25,7 @@ public class ValidatorHelper {
      * @param editText             Field to be validated
      * @param validator            Validator implementation
      * @param errorResourceMessage Error message if the validation not pass
-     * @return
+     * @return Validator helper instance for add validation to chain
      */
     public ValidatorHelper addValidation(EditText editText, Validator validator, String errorResourceMessage) {
         this.validations.add(new Validation(editText, validator, errorResourceMessage));
