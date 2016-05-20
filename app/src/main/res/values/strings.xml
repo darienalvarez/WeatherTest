@@ -5,7 +5,7 @@
     <string name="name">Name</string>
     <string name="zip_code">Zip code</string>
     <string name="save_user_preferences">Save user preferences</string>
-    <string name="weather_info">Weather info</string>
+    <string name="weather_info">Hello %s, this is your current weather forecast</string>
     <string name="update_info">Update</string>
     <string name="no_connection">There is not an Internet connection, do you want to enable it?</string>
     <string name="title_no_connection">Internet connection missing</string>
@@ -18,6 +18,7 @@
     <string name="option_change_zip_code">Change zip code</string>
     <string name="message_locate">You are located at: %1$s, %2$s.</string>
     <string name="error_get_forecast">Error getting forecast info</string>
-
+    <string name="activity_user_info">Personal information</string>
+    <string name="activity_weather_info">Weather forecast</string>
 
 </resources>

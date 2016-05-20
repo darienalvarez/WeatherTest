@@ -13,10 +13,19 @@
         android:id="@+id/weatherInfoTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/weather_info"
         android:layout_centerHorizontal="true"
         android:textColor="@android:color/holo_blue_dark"
         android:textAppearance="@android:style/TextAppearance.Medium"
+        android:layout_marginBottom="4dp" />
+
+    <TextView
+        android:id="@+id/locationTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:textColor="@android:color/holo_blue_dark"
+        android:textAppearance="@android:style/TextAppearance.Medium"
+        android:layout_below="@+id/weatherInfoTextView"
         android:layout_marginBottom="10dp" />
 
     <Button
@@ -24,7 +33,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/update_info"
-        android:layout_below="@+id/weatherInfoTextView"
+        android:layout_below="@+id/locationTextView"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
 
@@ -34,7 +43,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/weatherInfoTextView"
+        android:layout_below="@+id/locationTextView"
         android:layout_toLeftOf="@+id/updateBtn"
         android:layout_toStartOf="@id/updateBtn">
 

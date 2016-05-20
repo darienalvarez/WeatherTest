@@ -42,7 +42,7 @@ public class UserInfoActivity extends AppCompatActivity implements TaskCallback<
         String[] values = mController.validatePreferences();
         // if values is not null then you should show the Weather Info Activity instance of User Info Activity
         if (values != null) {
-            mController.navigate(values[0], values[1], new Location(values[2], values[3], values[4]));
+            mController.navigate(values[0], values[1], new Location(values[2], values[3]));
             finish();
         } else {
             // find if any async task is mRunning
@@ -64,18 +64,10 @@ public class UserInfoActivity extends AppCompatActivity implements TaskCallback<
             // check internet connection
             checkConnection();
 
-            mProgressDialog = DialogHelper.showProgressDialog(this);
+            mProgressDialog = DialogHelper.buildProgressDialog(this);
             if (mTaskFragment != null && mTaskFragment.isRunning()) {
                 mProgressDialog.show();
             }
-        }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (mProgressDialog != null && mProgressDialog.isShowing()) {
-            mProgressDialog.dismiss();
         }
     }
 
@@ -109,6 +101,10 @@ public class UserInfoActivity extends AppCompatActivity implements TaskCallback<
     }
 
     private void releaseFragment() {
+        if (findProgressDialog() != null) {
+            findProgressDialog().dismiss();
+        }
+
         if (mTaskFragment != null) {
             mTaskFragment.stopRunning();
             mTaskFragment = null;
@@ -122,21 +118,19 @@ public class UserInfoActivity extends AppCompatActivity implements TaskCallback<
         final String name = mNameEditText.getText().toString();
         final String zipCode = mZipCodeEditText.getText().toString();
 
-        if (location != null) {
-            // save the user data
-            mController.saveUserPreferences(name, zipCode, location);
+        // save the user data
+        mController.saveUserPreferences(name, zipCode, location);
 
-            String info = getResources().getString(R.string.message_locate, location.getCity(), location.getState());
-            DialogHelper.showInfoDialog(UserInfoActivity.this, info, new DialogHelper.ActionCallback() {
-                @Override
-                public void execute() {
-                    UserInfoActivity.this.finish();
+        String info = getString(R.string.message_locate, location.getCity(), location.getState());
+        DialogHelper.showInfoDialog(UserInfoActivity.this, info, new DialogHelper.ActionCallback() {
+            @Override
+            public void execute() {
+                UserInfoActivity.this.finish();
 
-                    // navigate to the weather info activity
-                    mController.navigate(name, zipCode, location);
-                }
-            });
-        }
+                // navigate to the weather info activity
+                mController.navigate(name, zipCode, location);
+            }
+        });
     }
 
     @Override

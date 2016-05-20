@@ -12,7 +12,7 @@ import com.flomio.test.networking.dto.Forecast;
 import java.util.List;
 
 /**
- * Created by darien
+ * Created by Darien
  * on 5/19/16.
  * <p>
  * Draw a forecast in a recycler View

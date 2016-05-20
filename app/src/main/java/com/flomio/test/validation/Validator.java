@@ -1,7 +1,7 @@
 package com.flomio.test.validation;
 
 /**
- * Created by darien
+ * Created by Darien
  * on 5/18/16.
  * <p>
  * Represents a Validation method

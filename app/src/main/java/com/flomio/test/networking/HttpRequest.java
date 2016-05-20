@@ -12,7 +12,7 @@ import java.net.URL;
 import java.util.concurrent.CountDownLatch;
 
 /**
- * Created by darien
+ * Created by Darien
  * on 5/19/16.
  *
  * Request helper

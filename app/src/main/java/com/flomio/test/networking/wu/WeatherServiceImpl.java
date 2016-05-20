@@ -7,6 +7,7 @@ import com.flomio.test.networking.HttpRequest;
 import com.flomio.test.networking.WeatherService;
 import com.flomio.test.networking.dto.Forecast;
 import com.flomio.test.networking.dto.Location;
+import com.flomio.test.networking.dto.Weather;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -18,8 +19,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by darien
+ * Created by Darien
  * on 5/19/16.
+ *
+ * Implement Weather service for Wunderground
  */
 public class WeatherServiceImpl implements WeatherService {
 
@@ -33,21 +36,7 @@ public class WeatherServiceImpl implements WeatherService {
             String url = BASE_PATH + API_KEY + "/geolookup/q/" + URLEncoder.encode(zipCode, "UTF-8") + ".json";
 
             String response = HttpRequest.getInstance().makeRequest(url);
-            return processLocationResponse(response);
-        }  catch (JSONException e) {
-            throw new InvalidResponseException();
-        } catch (UnsupportedEncodingException e) {
-            throw new InvalidRequestException();
-        }
-    }
-
-    public List<Forecast> getForecastByZipCode(String zipCode) throws NetworkException {
-
-        try {
-            String url = BASE_PATH + API_KEY + "/geolookup/conditions/forecast/q/" + URLEncoder.encode(zipCode, "UTF-8") + ".json";
-
-            String response = HttpRequest.getInstance().makeRequest(url);
-            return processForecastResponse(response);
+            return processLocationResponse(new JSONObject(response));
         } catch (JSONException e) {
             throw new InvalidResponseException();
         } catch (UnsupportedEncodingException e) {
@@ -55,36 +44,50 @@ public class WeatherServiceImpl implements WeatherService {
         }
     }
 
-    private Location processLocationResponse(String response) throws JSONException {
-        JSONObject jsonObject = new JSONObject(response);
+    public Weather getForecastByZipCode(String zipCode) throws NetworkException {
 
+        try {
+            String url = BASE_PATH + API_KEY + "/geolookup/conditions/forecast/q/" + URLEncoder.encode(zipCode, "UTF-8") + ".json";
+
+            String response = HttpRequest.getInstance().makeRequest(url);
+            return processWeatherResponse(new JSONObject(response));
+        } catch (JSONException e) {
+            throw new InvalidResponseException();
+        } catch (UnsupportedEncodingException e) {
+            throw new InvalidRequestException();
+        }
+    }
+
+    private Location processLocationResponse(JSONObject jsonObject) throws JSONException {
         JSONObject location = jsonObject.optJSONObject("location");
         if (location != null) {
-            String country = location.optString("country");
             String state = location.optString("state");
             String city = location.optString("city");
 
-            return new Location(country, state, city);
+            return new Location(state, city);
         }
-        return null;
+        throw new JSONException("invalid json");
     }
 
-    private List<Forecast> processForecastResponse(String response) throws JSONException {
-        JSONObject jsonObject = new JSONObject(response);
-
+    private List<Forecast> processForecastResponse(JSONObject jsonObject) throws JSONException {
         JSONObject forecast = jsonObject.getJSONObject("forecast");
 
         List<Forecast> forecasts = new ArrayList<>();
-        if (forecast != null) {
 
-            JSONObject forecastDay = forecast.getJSONObject("txt_forecast");
-            JSONArray forecastDayList = forecastDay.getJSONArray("forecastday");
-            for (int i = 0; i < forecastDayList.length(); i++) {
-                JSONObject currentForecast = forecastDayList.getJSONObject(i);
-                forecasts.add(new Forecast(currentForecast.getString("title"),
-                        currentForecast.getString("fcttext")));
-            }
+        JSONObject forecastDay = forecast.getJSONObject("txt_forecast");
+        JSONArray forecastDayList = forecastDay.getJSONArray("forecastday");
+        for (int i = 0; i < forecastDayList.length(); i++) {
+            JSONObject currentForecast = forecastDayList.getJSONObject(i);
+            forecasts.add(new Forecast(currentForecast.getString("title"),
+                    currentForecast.getString("fcttext")));
         }
         return forecasts;
+    }
+
+    private Weather processWeatherResponse(JSONObject jsonObject) throws JSONException {
+        Location location = processLocationResponse(jsonObject);
+        List<Forecast> forecastList = processForecastResponse(jsonObject);
+
+        return new Weather(location, forecastList);
     }
 }

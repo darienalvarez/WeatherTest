@@ -18,7 +18,6 @@ public class SharedPreferencesHelper {
 
     public static final String PREFERENCE_NAME = "name_preference";
     public static final String PREFERENCE_ZIP_CODE = "zip_code_preference";
-    public static final String PREFERENCE_COUNTRY = "country_preference";
     public static final String PREFERENCE_STATE = "state_preference";
     public static final String PREFERENCE_CITY = "city_preference";
 

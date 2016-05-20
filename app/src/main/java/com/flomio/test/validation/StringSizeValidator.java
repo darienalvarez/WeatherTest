@@ -20,7 +20,7 @@ public class StringSizeValidator implements Validator {
      */
     public StringSizeValidator(int minSize) {
         if (minSize < 1) {
-            new IllegalArgumentException("min value must be higher than 0");
+            throw new IllegalArgumentException("min value must be higher than 0");
         }
 
         this.minSize = minSize;

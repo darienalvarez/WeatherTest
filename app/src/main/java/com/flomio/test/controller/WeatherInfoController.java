@@ -8,7 +8,7 @@ import com.flomio.test.WeatherInfoActivity;
 import com.flomio.test.util.SharedPreferencesHelper;
 
 /**
- * Created by darien
+ * Created by Darien
  * on 5/19/16.
  * <p>
  * Weather info activity controller
@@ -28,7 +28,6 @@ public class WeatherInfoController {
 
         editor.putString(SharedPreferencesHelper.PREFERENCE_NAME, "");
         editor.putString(SharedPreferencesHelper.PREFERENCE_ZIP_CODE, "");
-        editor.putString(SharedPreferencesHelper.PREFERENCE_COUNTRY, "");
         editor.putString(SharedPreferencesHelper.PREFERENCE_STATE, "");
         editor.putString(SharedPreferencesHelper.PREFERENCE_CITY, "");
 

@@ -5,7 +5,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
 /**
- * Created by darien
+ * Created by Darien
  * on 5/19/16.
  * <p>
  * Helper to get connectivity properties

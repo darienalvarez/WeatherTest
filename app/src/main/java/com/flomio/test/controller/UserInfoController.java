@@ -36,13 +36,12 @@ public class UserInfoController {
         String name = sharedPreferences.getString(SharedPreferencesHelper.PREFERENCE_NAME, null);
         String zipCode = sharedPreferences.getString(SharedPreferencesHelper.PREFERENCE_ZIP_CODE, null);
 
-        String country = sharedPreferences.getString(SharedPreferencesHelper.PREFERENCE_COUNTRY, null);
         String state = sharedPreferences.getString(SharedPreferencesHelper.PREFERENCE_STATE, null);
         String city = sharedPreferences.getString(SharedPreferencesHelper.PREFERENCE_CITY, null);
 
-        if (!TextUtils.isEmpty(name) && !TextUtils.isEmpty(zipCode) && !TextUtils.isEmpty(country)
+        if (!TextUtils.isEmpty(name) && !TextUtils.isEmpty(zipCode)
                 && !TextUtils.isEmpty(state) && !TextUtils.isEmpty(city)) {
-            return new String[]{name, zipCode, country, state, city};
+            return new String[]{name, zipCode, state, city};
         }
         return null;
     }
@@ -63,7 +62,7 @@ public class UserInfoController {
 
         editor.putString(SharedPreferencesHelper.PREFERENCE_NAME, name);
         editor.putString(SharedPreferencesHelper.PREFERENCE_ZIP_CODE, zipCode);
-        editor.putString(SharedPreferencesHelper.PREFERENCE_COUNTRY, location.getCountry());
+
         editor.putString(SharedPreferencesHelper.PREFERENCE_STATE, location.getState());
         editor.putString(SharedPreferencesHelper.PREFERENCE_CITY, location.getCity());
 
@@ -81,9 +80,8 @@ public class UserInfoController {
         Intent intent = new Intent(context, WeatherInfoActivity.class);
         intent.putExtra(BundleConstant.NAME, name);
         intent.putExtra(BundleConstant.ZIP_CODE, zipCode);
-        intent.putExtra(BundleConstant.COUNTRY, location.getCountry());
-        intent.putExtra(BundleConstant.STATE, location.getState());
-        intent.putExtra(BundleConstant.CITY, location.getCity());
+
+        intent.putExtra(BundleConstant.LOCATION, location);
 
         context.startActivity(intent);
     }

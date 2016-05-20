@@ -10,7 +10,7 @@ import android.provider.Settings;
 import com.flomio.test.R;
 
 /**
- * Created by darien
+ * Created by Darien
  * on 5/19/16.
  */
 public class DialogHelper {
@@ -45,15 +45,6 @@ public class DialogHelper {
         builder.show();
     }
 
-    public static ProgressDialog showProgressDialog(Context context) {
-        ProgressDialog progress = new ProgressDialog(context);
-        progress.setMessage("Loading info");
-        progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        progress.setIndeterminate(true);
-        return progress;
-    }
-
-
     public static void showErrorDialog(Context context, int messageResource) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setCancelable(true);
@@ -68,6 +59,14 @@ public class DialogHelper {
         );
 
         builder.show();
+    }
+
+    public static ProgressDialog buildProgressDialog(Context context) {
+        ProgressDialog progress = new ProgressDialog(context);
+        progress.setMessage("Loading info");
+        progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progress.setIndeterminate(true);
+        return progress;
     }
 
     public static void showInfoDialog(Context context, String messageResource, final ActionCallback action) {
