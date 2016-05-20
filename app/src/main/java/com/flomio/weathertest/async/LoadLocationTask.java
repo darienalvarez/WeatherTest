@@ -15,6 +15,11 @@ public class LoadLocationTask<P extends String, G, R extends Location> extends A
     protected Location doInBackground(String... param) {
 
         try {
+            try {
+                Thread.sleep(3000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             WeatherService service = new WeatherServiceImpl();
             return service.getLocationByZipCode(param[0]);
 

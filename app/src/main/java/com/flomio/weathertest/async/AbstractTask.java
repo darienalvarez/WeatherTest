@@ -1,7 +1,6 @@
 package com.flomio.weathertest.async;
 
 import android.os.AsyncTask;
-import android.view.View;
 
 /**
  * Created by Darien
@@ -17,8 +16,8 @@ public abstract class AbstractTask<P, G, R> extends AsyncTask<P, G, R> {
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        if (mCallback.findProgressBar() != null) {
-            mCallback.findProgressBar().setVisibility(View.VISIBLE);
+        if (mCallback.findProgressDialog() != null) {
+            mCallback.findProgressDialog().show();
         }
     }
 
@@ -26,8 +25,8 @@ public abstract class AbstractTask<P, G, R> extends AsyncTask<P, G, R> {
     protected void onCancelled() {
 
         if (mCallback != null) {
-            if (mCallback.findProgressBar() != null) {
-                mCallback.findProgressBar().setVisibility(View.GONE);
+            if (mCallback.findProgressDialog() != null) {
+                mCallback.findProgressDialog().dismiss();
             }
 
             mCallback.onCancelled();
@@ -37,8 +36,8 @@ public abstract class AbstractTask<P, G, R> extends AsyncTask<P, G, R> {
     @Override
     protected void onPostExecute(R result) {
         if (mCallback != null) {
-            if (mCallback.findProgressBar() != null) {
-                mCallback.findProgressBar().setVisibility(View.GONE);
+            if (mCallback.findProgressDialog() != null) {
+                mCallback.findProgressDialog().dismiss();
             }
 
             if (mException != null) {

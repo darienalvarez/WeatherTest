@@ -1,12 +1,12 @@
 package com.flomio.weathertest;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ProgressBar;
 
 import com.flomio.weathertest.async.LoadLocationTask;
 import com.flomio.weathertest.async.TaskCallback;
@@ -24,14 +24,13 @@ public class UserInfoActivity extends AppCompatActivity implements TaskCallback<
 
     private TextInputEditText mNameEditText;
     private TextInputEditText mZipCodeEditText;
-    private ProgressBar mProgressBar;
 
     private FragmentManager mFragmentManager;
     private TaskFragment mTaskFragment;
 
     private UserInfoController mController;
     private ValidatorHelper mValidatorHelper;
-    private boolean mRunning;
+    private ProgressDialog mProgressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,17 +52,30 @@ public class UserInfoActivity extends AppCompatActivity implements TaskCallback<
             this.mNameEditText = (TextInputEditText) findViewById(R.id.nameEditText);
             this.mZipCodeEditText = (TextInputEditText) findViewById(R.id.zipCodeEditText);
 
-            this.mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
-
             mValidatorHelper = new ValidatorHelper()
                     .addValidation(mNameEditText, new StringSizeValidator(3), "Your name size must be 3 letters or more")
                     .addValidation(mZipCodeEditText, new StringSizeValidator(3), "Your zip code size must be 3 numbers or more");
 
             Button mSavePreferencesButton = (Button) findViewById(R.id.savePreferencesButton);
-            mSavePreferencesButton.setOnClickListener(saveOnClick);
+            if (mSavePreferencesButton != null) {
+                mSavePreferencesButton.setOnClickListener(saveOnClick);
+            }
 
             // check internet connection
             checkConnection();
+
+            mProgressDialog = DialogHelper.showProgressDialog(this);
+            if (mTaskFragment != null && mTaskFragment.isRunning()) {
+                mProgressDialog.show();
+            }
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mProgressDialog != null && mProgressDialog.isShowing()) {
+            mProgressDialog.dismiss();
         }
     }
 
@@ -89,17 +101,24 @@ public class UserInfoActivity extends AppCompatActivity implements TaskCallback<
     private void findLocationByZipCode(String zipCode) {
         // If the Fragment is non-null, then it is currently being
         // retained across a configuration change.
-        if (!mRunning) {
-            this.mRunning = true;
+        if (mTaskFragment == null || !mTaskFragment.isRunning()) {
             mTaskFragment = new TaskFragment<String, Void, Location>()
-                    .addConfiguration(new LoadLocationTask(), new String[]{zipCode}, UserInfoActivity.this);
+                    .addConfiguration(new LoadLocationTask(), new String[]{zipCode});
             mFragmentManager.beginTransaction().replace(R.id.container, mTaskFragment, TAG_TASK_FRAGMENT).commit();
+        }
+    }
+
+    private void releaseFragment() {
+        if (mTaskFragment != null) {
+            mTaskFragment.stopRunning();
+            mTaskFragment = null;
         }
     }
 
     @Override
     public void onSuccess(final Location location) {
-        this.mRunning = false;
+        releaseFragment();
+
         final String name = mNameEditText.getText().toString();
         final String zipCode = mZipCodeEditText.getText().toString();
 
@@ -122,17 +141,18 @@ public class UserInfoActivity extends AppCompatActivity implements TaskCallback<
 
     @Override
     public void onCancelled() {
-        this.mRunning = false;
+        releaseFragment();
     }
 
     @Override
     public void onError(Throwable e) {
-        this.mRunning = false;
+        releaseFragment();
+
         DialogHelper.showErrorDialog(UserInfoActivity.this, R.string.error_get_location);
     }
 
     @Override
-    public ProgressBar findProgressBar() {
-        return mProgressBar;
+    public ProgressDialog findProgressDialog() {
+        return mProgressDialog;
     }
 }

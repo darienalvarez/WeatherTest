@@ -1,6 +1,6 @@
 package com.flomio.weathertest.async;
 
-import android.widget.ProgressBar;
+import android.app.ProgressDialog;
 
 /**
  * Created by Darien
@@ -10,7 +10,7 @@ import android.widget.ProgressBar;
  */
 public interface TaskCallback<T> {
 
-    ProgressBar findProgressBar();
+    ProgressDialog findProgressDialog();
 
     void onSuccess(T result);
 

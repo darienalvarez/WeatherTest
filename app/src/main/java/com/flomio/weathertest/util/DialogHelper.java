@@ -45,13 +45,13 @@ public class DialogHelper {
         builder.show();
     }
 
-    public static void showProgressDialog(Context context) {
+    public static ProgressDialog showProgressDialog(Context context) {
         ProgressDialog progress = new ProgressDialog(context);
         progress.setMessage("Loading info");
         progress.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         progress.setIndeterminate(true);
         progress.setProgress(0);
-        progress.show();
+        return progress;
     }
 
 

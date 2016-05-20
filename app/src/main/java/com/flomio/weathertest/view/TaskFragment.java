@@ -16,10 +16,10 @@ public class TaskFragment<P, G, R> extends Fragment {
     private TaskCallback<R> mCallback;
     private AbstractTask<P, G, R> mTask;
     private P[] mParam;
+    private boolean mRunning;
 
-    public TaskFragment addConfiguration(AbstractTask<P, G, R> task, P[] param, TaskCallback<R> callback) {
+    public TaskFragment addConfiguration(AbstractTask<P, G, R> task, P[] param) {
         this.mTask = task;
-        this.mCallback = callback;
         this.mParam = param;
         return this;
     }
@@ -33,7 +33,6 @@ public class TaskFragment<P, G, R> extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-
 
         mCallback = (TaskCallback<R>) context;
     }
@@ -50,8 +49,9 @@ public class TaskFragment<P, G, R> extends Fragment {
         setRetainInstance(true);
 
         // Execute task
-        mTask.setCallback(mCallback);
-        mTask.execute(mParam);
+        this.mRunning = true;
+        this.mTask.setCallback(mCallback);
+        this.mTask.execute(mParam);
     }
 
     /**
@@ -61,6 +61,14 @@ public class TaskFragment<P, G, R> extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        mCallback = null;
+        this.mCallback = null;
+    }
+
+    public boolean isRunning() {
+        return mRunning;
+    }
+
+    public void stopRunning() {
+        this.mRunning = false;
     }
 }
