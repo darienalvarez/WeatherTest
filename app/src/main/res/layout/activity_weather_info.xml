@@ -51,6 +51,7 @@
             android:id="@+id/zipCodeEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:inputType="number"
             android:hint="@string/zip_code" />
 
     </android.support.design.widget.TextInputLayout>
