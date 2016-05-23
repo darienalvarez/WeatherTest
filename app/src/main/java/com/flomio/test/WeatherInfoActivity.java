@@ -91,14 +91,6 @@ public class WeatherInfoActivity extends BaseActivity implements TaskCallback<We
 
         updateRecyclerView(mWeather);
 
-        if (mProgressDialog == null) {
-            mProgressDialog = DialogHelper.buildProgressDialog(WeatherInfoActivity.this);
-        }
-
-        if (mTaskFragment != null && mTaskFragment.isRunning()) {
-            mProgressDialog.show();
-        }
-
         // run just on first creation
         if (savedInstanceState == null) {
             findForecastByZipCode(mZipCode);
@@ -167,9 +159,6 @@ public class WeatherInfoActivity extends BaseActivity implements TaskCallback<We
         // If the Fragment is non-null, then it is currently being
         // retained across a configuration change.
         if (mTaskFragment == null || !mTaskFragment.isRunning()) {
-            if (mProgressDialog != null && !mProgressDialog.isShowing()) {
-                mProgressDialog.show();
-            }
 
             mTaskFragment = new TaskFragment<String, Void, Weather>()
                     .addConfiguration(new LoadForecastTask(), new String[]{zipCode});
@@ -188,6 +177,15 @@ public class WeatherInfoActivity extends BaseActivity implements TaskCallback<We
                     getString(R.string.message_locate,
                             mWeather.getLocation().getCity(),
                             mWeather.getLocation().getState()));
+        }
+    }
+
+    protected void releaseFragment() {
+        synchronized (this) {
+            if (mTaskFragment != null) {
+                mTaskFragment.stopRunning();
+                mTaskFragment = null;
+            }
         }
     }
 

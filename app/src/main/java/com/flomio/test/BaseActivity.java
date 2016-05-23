@@ -16,8 +16,6 @@ import com.flomio.test.view.TaskFragment;
  */
 public abstract class BaseActivity extends AppCompatActivity {
 
-    protected ProgressDialog mProgressDialog;
-
     protected FragmentManager mFragmentManager;
     protected TaskFragment mTaskFragment;
 
@@ -32,19 +30,6 @@ public abstract class BaseActivity extends AppCompatActivity {
             view = new View(activity);
         }
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-    }
-
-    protected void releaseFragment() {
-        synchronized (this) {
-            if (mProgressDialog != null && mProgressDialog.isShowing()) {
-                mProgressDialog.dismiss();
-            }
-
-            if (mTaskFragment != null) {
-                mTaskFragment.stopRunning();
-                mTaskFragment = null;
-            }
-        }
     }
 
 }

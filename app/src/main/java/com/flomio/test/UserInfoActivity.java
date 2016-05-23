@@ -42,14 +42,6 @@ public class UserInfoActivity extends BaseActivity implements TaskCallback<Locat
             this.mFragmentManager = getSupportFragmentManager();
             this.mTaskFragment = (TaskFragment) mFragmentManager.findFragmentByTag(TAG_TASK_FRAGMENT);
 
-            if (mProgressDialog == null) {
-                mProgressDialog = DialogHelper.buildProgressDialog(UserInfoActivity.this);
-            }
-
-            if (mTaskFragment != null && mTaskFragment.isRunning()) {
-                mProgressDialog.show();
-            }
-
             this.mNameEditText = (TextInputEditText) findViewById(R.id.nameEditText);
             this.mZipCodeEditText = (TextInputEditText) findViewById(R.id.zipCodeEditText);
 
@@ -81,10 +73,6 @@ public class UserInfoActivity extends BaseActivity implements TaskCallback<Locat
         public void onClick(View view) {
             hideKeyboard(UserInfoActivity.this);
             if (mValidatorHelper.isValid()) {
-                if (mProgressDialog != null && !mProgressDialog.isShowing()) {
-                    mProgressDialog.show();
-                }
-
                 String zipCode = mZipCodeEditText.getText().toString();
                 findLocationByZipCode(zipCode);
             }
@@ -136,6 +124,16 @@ public class UserInfoActivity extends BaseActivity implements TaskCallback<Locat
             DialogHelper.showErrorDialog(UserInfoActivity.this, R.string.error_get_request_exceeded);
         } else {
             DialogHelper.showErrorDialog(UserInfoActivity.this, R.string.error_get_location);
+        }
+    }
+
+    protected void releaseFragment() {
+        synchronized (this) {
+
+            if (mTaskFragment != null) {
+                mTaskFragment.stopRunning();
+                mTaskFragment = null;
+            }
         }
     }
 }

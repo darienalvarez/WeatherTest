@@ -1,11 +1,14 @@
 package com.flomio.test.view;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 
 import com.flomio.test.async.AbstractTask;
 import com.flomio.test.async.TaskCallback;
+import com.flomio.test.util.DialogHelper;
 
 /**
  * Created by Darien
@@ -17,6 +20,8 @@ public class TaskFragment<P, G, R> extends Fragment {
     private AbstractTask<P, G, R> mTask;
     private P[] mParam;
     private boolean mRunning;
+
+    protected ProgressDialog mProgressDialog;
 
     public TaskFragment addConfiguration(AbstractTask<P, G, R> task, P[] param) {
         this.mTask = task;
@@ -36,6 +41,13 @@ public class TaskFragment<P, G, R> extends Fragment {
 
         //noinspection unchecked
         mCallback = (TaskCallback<R>) context;
+
+        if (mProgressDialog != null && !mProgressDialog.isShowing() && mRunning) {
+            mProgressDialog.show();
+        } else if (mProgressDialog == null && mRunning) {
+            this.mProgressDialog = DialogHelper.buildProgressDialog(context);
+            this.mProgressDialog.show();
+        }
     }
 
     /**
@@ -56,6 +68,17 @@ public class TaskFragment<P, G, R> extends Fragment {
         // Execute task
         //noinspection unchecked
         this.mTask.execute(mParam);
+
+        if (mProgressDialog == null && mRunning) {
+            this.mProgressDialog = DialogHelper.buildProgressDialog(getActivity());
+            this.mProgressDialog.show();
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mRunning = false;
     }
 
     /**
@@ -66,6 +89,11 @@ public class TaskFragment<P, G, R> extends Fragment {
     public void onDetach() {
         super.onDetach();
         this.mCallback = null;
+
+        if (mProgressDialog != null && mProgressDialog.isShowing()) {
+            mProgressDialog.dismiss();
+            mProgressDialog = null;
+        }
     }
 
     public boolean isRunning() {
@@ -73,6 +101,13 @@ public class TaskFragment<P, G, R> extends Fragment {
     }
 
     public void stopRunning() {
+
         this.mRunning = false;
+
+        if (mProgressDialog != null && mProgressDialog.isShowing()) {
+            mProgressDialog.dismiss();
+            mProgressDialog = null;
+        }
+
     }
 }
