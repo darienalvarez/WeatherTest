@@ -13,6 +13,10 @@ import com.flomio.test.networking.dto.Weather;
  */
 public class LoadForecastTask extends AbstractTask<String, Void, Weather> {
 
+    public LoadForecastTask(TaskCallback<Weather> callback) {
+        super(callback);
+    }
+
     @Override
     protected Weather doInBackground(String... param) {
 

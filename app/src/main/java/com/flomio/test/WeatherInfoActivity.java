@@ -1,6 +1,7 @@
 package com.flomio.test;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -46,55 +47,57 @@ public class WeatherInfoActivity extends BaseActivity implements TaskCallback<We
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_weather_info);
 
+        this.mLocationTextView = (TextView) findViewById(R.id.locationTextView);
+        this.mZipCodeEditText = (TextInputEditText) findViewById(R.id.zipCodeEditText);
+        this.mRecyclerView = (RecyclerView) findViewById(R.id.weatherRecyclerView);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+
+        TextView weatherInfoTextView = (TextView) findViewById(R.id.weatherInfoTextView);
+        Button updateBtn = (Button) findViewById(R.id.updateBtn);
+
+        this.mFragmentManager = getSupportFragmentManager();
+        this.mTaskFragment = (TaskFragment) mFragmentManager.findFragmentByTag(TAG_TASK_FRAGMENT);
+
+        this.mController = new WeatherInfoController(WeatherInfoActivity.this);
+
         if (savedInstanceState != null) {
             // Saved state
             mName = savedInstanceState.getString(BundleConstant.NAME);
             mZipCode = savedInstanceState.getString(BundleConstant.ZIP_CODE);
             mWeather = savedInstanceState.getParcelable(BundleConstant.WEATHER);
+
+            if (mWeather != null) {
+                updateHeaderViews(mWeather.getLocation());
+                updateRecyclerView(mWeather);
+            }
         } else {
             // default initialization
             mName = getIntent().getStringExtra(BundleConstant.NAME);
             mZipCode = getIntent().getStringExtra(BundleConstant.ZIP_CODE);
 
             Location location = getIntent().getParcelableExtra(BundleConstant.LOCATION);
+            updateHeaderViews(location);
             mWeather = new Weather(location, new ArrayList<Forecast>());
+
+            findForecastByZipCode(mZipCode);
         }
 
-        TextView weatherInfoTextView = (TextView) findViewById(R.id.weatherInfoTextView);
         if (weatherInfoTextView != null) {
             weatherInfoTextView.setText(getString(R.string.weather_info, mName));
         }
 
-        this.mLocationTextView = (TextView) findViewById(R.id.locationTextView);
-
-        this.mZipCodeEditText = (TextInputEditText) findViewById(R.id.zipCodeEditText);
         if (this.mZipCodeEditText != null) {
             this.mZipCodeEditText.setText(mZipCode);
+            mValidatorHelper = new ValidatorHelper()
+                    .addValidation(mZipCodeEditText, new StringSizeValidator(3), "Your zip code size must be 3 numbers or more");
         }
-        mValidatorHelper = new ValidatorHelper()
-                .addValidation(mZipCodeEditText, new StringSizeValidator(3), "Your zip code size must be 3 numbers or more");
 
-        Button updateBtn = (Button) findViewById(R.id.updateBtn);
         if (updateBtn != null) {
             updateBtn.setOnClickListener(updateClick);
         }
 
-        this.mRecyclerView = (RecyclerView) findViewById(R.id.weatherRecyclerView);
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
-        mRecyclerView.setLayoutManager(mLayoutManager);
-        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-
-        this.mController = new WeatherInfoController(WeatherInfoActivity.this);
-
-        this.mFragmentManager = getSupportFragmentManager();
-        this.mTaskFragment = (TaskFragment) mFragmentManager.findFragmentByTag(TAG_TASK_FRAGMENT);
-
-        updateRecyclerView(mWeather);
-
-        // run just on first creation
-        if (savedInstanceState == null) {
-            findForecastByZipCode(mZipCode);
-        }
     }
 
     @Override
@@ -122,9 +125,10 @@ public class WeatherInfoActivity extends BaseActivity implements TaskCallback<We
 
     @Override
     public void onSuccess(Weather result) {
-        releaseFragment();
-
+        mWeather = result;
+        updateHeaderViews(mWeather.getLocation());
         updateRecyclerView(result);
+        releaseFragment();
     }
 
     @Override
@@ -161,23 +165,29 @@ public class WeatherInfoActivity extends BaseActivity implements TaskCallback<We
         if (mTaskFragment == null || !mTaskFragment.isRunning()) {
 
             mTaskFragment = new TaskFragment<String, Void, Weather>()
-                    .addConfiguration(new LoadForecastTask(), new String[]{zipCode});
+                    .addConfiguration(new LoadForecastTask(), new String[]{zipCode}, this);
             mFragmentManager.beginTransaction().replace(R.id.container, mTaskFragment, TAG_TASK_FRAGMENT).commit();
         }
     }
 
-    private void updateRecyclerView(Weather data) {
-        this.mWeather = data;
+    private void updateHeaderViews(final Location location) {
+        if (mLocationTextView != null && location != null) {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mLocationTextView.setText(
+                            getString(R.string.message_locate,
+                                    location.getCity(),
+                                    location.getState()));
+                }
+            }, 100);
 
-        ForecastAdapter adapter = new ForecastAdapter(mWeather.getForecastList());
-        this.mRecyclerView.setAdapter(adapter);
-
-        if (mLocationTextView != null && mWeather.getLocation() != null) {
-            mLocationTextView.setText(
-                    getString(R.string.message_locate,
-                            mWeather.getLocation().getCity(),
-                            mWeather.getLocation().getState()));
         }
+    }
+
+    private void updateRecyclerView(Weather data) {
+        ForecastAdapter adapter = new ForecastAdapter(data.getForecastList());
+        mRecyclerView.setAdapter(adapter);
     }
 
     protected void releaseFragment() {

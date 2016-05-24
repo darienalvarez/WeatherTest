@@ -23,9 +23,10 @@ public class TaskFragment<P, G, R> extends Fragment {
 
     protected ProgressDialog mProgressDialog;
 
-    public TaskFragment addConfiguration(AbstractTask<P, G, R> task, P[] param) {
+    public TaskFragment addConfiguration(AbstractTask<P, G, R> task, P[] param, TaskCallback<R> callback) {
         this.mTask = task;
         this.mParam = param;
+        this.mCallback = callback;
         return this;
     }
 
@@ -43,8 +44,10 @@ public class TaskFragment<P, G, R> extends Fragment {
         mCallback = (TaskCallback<R>) context;
 
         if (mProgressDialog != null && !mProgressDialog.isShowing() && mRunning) {
+            // showing dialog if is running and dialog not showing
             mProgressDialog.show();
         } else if (mProgressDialog == null && mRunning) {
+            // create an showing dialog if is running
             this.mProgressDialog = DialogHelper.buildProgressDialog(context);
             this.mProgressDialog.show();
         }
@@ -70,6 +73,7 @@ public class TaskFragment<P, G, R> extends Fragment {
         this.mTask.execute(mParam);
 
         if (mProgressDialog == null && mRunning) {
+            // create an showing dialog if is running (first time)
             this.mProgressDialog = DialogHelper.buildProgressDialog(getActivity());
             this.mProgressDialog.show();
         }
@@ -88,9 +92,10 @@ public class TaskFragment<P, G, R> extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        this.mCallback = null;
+        //this.mCallback = null;
 
         if (mProgressDialog != null && mProgressDialog.isShowing()) {
+            // prevent leak dismiss dialog and clear references
             mProgressDialog.dismiss();
             mProgressDialog = null;
         }
@@ -105,6 +110,7 @@ public class TaskFragment<P, G, R> extends Fragment {
         this.mRunning = false;
 
         if (mProgressDialog != null && mProgressDialog.isShowing()) {
+            // close dialog and clear references
             mProgressDialog.dismiss();
             mProgressDialog = null;
         }

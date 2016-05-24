@@ -13,6 +13,11 @@ public abstract class AbstractTask<P, G, R> extends AsyncTask<P, G, R> {
     private TaskCallback<R> mCallback;
     protected Exception mException;
 
+    public AbstractTask(TaskCallback<R> callback) {
+        super();
+        mCallback = callback;
+    }
+
     @Override
     protected void onCancelled() {
         if (mCallback != null) {

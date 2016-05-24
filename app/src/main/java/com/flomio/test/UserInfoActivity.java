@@ -84,7 +84,7 @@ public class UserInfoActivity extends BaseActivity implements TaskCallback<Locat
         // retained across a configuration change.
         if (mTaskFragment == null || !mTaskFragment.isRunning()) {
             mTaskFragment = new TaskFragment<String, Void, Location>()
-                    .addConfiguration(new LoadLocationTask(), new String[]{zipCode});
+                    .addConfiguration(new LoadLocationTask(), new String[]{zipCode}, this);
             mFragmentManager.beginTransaction().replace(R.id.container, mTaskFragment, TAG_TASK_FRAGMENT).commit();
         }
     }

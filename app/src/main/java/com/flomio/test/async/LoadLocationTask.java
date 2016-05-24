@@ -13,6 +13,10 @@ import com.flomio.test.networking.dto.Location;
  */
 public class LoadLocationTask extends AbstractTask<String, Void, Location> {
 
+    public LoadLocationTask(TaskCallback<Location> callback) {
+        super(callback);
+    }
+
     @Override
     protected Location doInBackground(String... param) {
 
