@@ -56,15 +56,7 @@ public class WeatherInfoFragment extends Fragment implements TaskCallback<Weathe
     private String mZipCode;
 
     private boolean mRunning;
-    private AbstractTask mTask;
     private ValidatorHelper mValidatorHelper;
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_weather_info, container, false);
-    }
 
     /**
      * This method will only be called once when the retained
@@ -76,7 +68,19 @@ public class WeatherInfoFragment extends Fragment implements TaskCallback<Weathe
 
         // Retain this fragment across configuration changes.
         setRetainInstance(true);
+
+        // show options menu
+        setHasOptionsMenu(true);
     }
+
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_weather_info, container, false);
+    }
+
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -84,8 +88,8 @@ public class WeatherInfoFragment extends Fragment implements TaskCallback<Weathe
 
         this.mLocationTextView = (TextView) getActivity().findViewById(R.id.locationTextView);
         this.mZipCodeEditText = (TextInputEditText) getActivity().findViewById(R.id.zipCodeEditText);
-        this.mRecyclerView = (RecyclerView) getActivity().findViewById(R.id.weatherRecyclerView);
         this.mProgressBar = (ProgressBar) getActivity().findViewById(R.id.progressBar);
+        this.mRecyclerView = (RecyclerView) getActivity().findViewById(R.id.weatherRecyclerView);
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
@@ -198,10 +202,10 @@ public class WeatherInfoFragment extends Fragment implements TaskCallback<Weathe
     private void findForecastByZipCode(String zipCode) {
         if (!mRunning) {
             // set task parameters
-            this.mTask = new LoadForecastTask(this);
+            AbstractTask mTask = new LoadForecastTask(this);
             // Execute task
             //noinspection unchecked
-            this.mTask.execute(new String[]{zipCode});
+            mTask.execute(new String[]{zipCode});
             this.mRunning = true;
             showProgress();
         }
