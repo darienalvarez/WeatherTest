@@ -21,11 +21,6 @@ public class LoadForecastTask extends AbstractTask<String, Void, Weather> {
     protected Weather doInBackground(String... param) {
 
         try {
-            try {
-                Thread.sleep(4000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
             WeatherService service = new WeatherServiceFactory().getService("WU");
             if (service != null) {
                 return service.getForecastByZipCode(param[0]);

@@ -29,9 +29,8 @@ public class UserInfoActivity extends BaseActivity  {
 
             if(mTaskFragment == null) {
                 mTaskFragment = new UserInfoFragment();
+                mFragmentManager.beginTransaction().add(R.id.container, mTaskFragment, TAG_TASK_FRAGMENT).commit();
             }
-
-            mFragmentManager.beginTransaction().add(R.id.container, mTaskFragment, TAG_TASK_FRAGMENT).commit();
         }
     }
 

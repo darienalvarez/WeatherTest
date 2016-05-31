@@ -1,7 +1,6 @@
 package com.flomio.test.view;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
@@ -11,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.ProgressBar;
 
 import com.flomio.test.R;
 import com.flomio.test.UserInfoActivity;
@@ -34,7 +34,7 @@ public class UserInfoFragment extends Fragment implements TaskCallback<Location>
     private TextInputEditText mZipCodeEditText;
     private Button mSavePreferencesButton;
 
-    private ProgressDialog mProgressDialog;
+    private ProgressBar mProgressBar;
 
     private UserInfoController mController;
 
@@ -45,13 +45,7 @@ public class UserInfoFragment extends Fragment implements TaskCallback<Location>
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_user_info, container, false);
-
-        this.mNameEditText = (TextInputEditText) view.findViewById(R.id.nameEditText);
-        this.mZipCodeEditText = (TextInputEditText) view.findViewById(R.id.zipCodeEditText);
-        this.mSavePreferencesButton = (Button) view.findViewById(R.id.savePreferencesButton);
-
-        return view;
+        return inflater.inflate(R.layout.fragment_user_info, container, false);
     }
 
     /**
@@ -72,6 +66,11 @@ public class UserInfoFragment extends Fragment implements TaskCallback<Location>
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        mNameEditText = (TextInputEditText) getActivity().findViewById(R.id.nameEditText);
+        mZipCodeEditText = (TextInputEditText) getActivity().findViewById(R.id.zipCodeEditText);
+        mSavePreferencesButton = (Button) getActivity().findViewById(R.id.savePreferencesButton);
+        mProgressBar = (ProgressBar) getActivity().findViewById(R.id.progressBar);
+
         mValidatorHelper = new ValidatorHelper()
                 .addValidation(mNameEditText, new StringSizeValidator(3), "Your name size must be 3 letters or more")
                 .addValidation(mZipCodeEditText, new StringSizeValidator(3), "Your zip code size must be 3 numbers or more");
@@ -83,16 +82,16 @@ public class UserInfoFragment extends Fragment implements TaskCallback<Location>
         // check internet connection
         checkConnection();
 
-        if (mProgressDialog == null && mRunning) {
+        if (mRunning) {
             // create an showing dialog if is running (first time)
-            this.mProgressDialog = DialogHelper.buildProgressDialog(getActivity());
-            this.mProgressDialog.show();
+            showProgress();
         }
     }
 
     @Override
     public void onSuccess(final Location location) {
-        hideProgressDialog();
+        mRunning = false;
+        hideProgress();
 
         final String name = mNameEditText.getText().toString();
         final String zipCode = mZipCodeEditText.getText().toString();
@@ -114,12 +113,14 @@ public class UserInfoFragment extends Fragment implements TaskCallback<Location>
 
     @Override
     public void onCancelled() {
-        hideProgressDialog();
+        mRunning = false;
+        hideProgress();
     }
 
     @Override
     public void onError(Throwable e) {
-        hideProgressDialog();
+        mRunning = false;
+        hideProgress();
 
         if (e instanceof RequestExceededException) {
             DialogHelper.showErrorDialog(getActivity(), R.string.error_get_request_exceeded);
@@ -148,15 +149,6 @@ public class UserInfoFragment extends Fragment implements TaskCallback<Location>
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
-    protected void hideProgressDialog() {
-        if (mProgressDialog != null) {
-            if (mProgressDialog.isShowing()) {
-                mProgressDialog.dismiss();
-            }
-            mProgressDialog = null;
-        }
-    }
-
     private final View.OnClickListener saveOnClick = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
@@ -169,9 +161,6 @@ public class UserInfoFragment extends Fragment implements TaskCallback<Location>
     };
 
     private void findLocationByZipCode(String zipCode) {
-        // If the Fragment is non-null, then it is currently being
-        // retained across a configuration change.
-
         // set task parameters
         LoadLocationTask task = new LoadLocationTask(this);
 
@@ -180,5 +169,15 @@ public class UserInfoFragment extends Fragment implements TaskCallback<Location>
         task.execute(zipCode);
         this.mRunning = true;
 
+        showProgress();
+
+    }
+
+    protected void showProgress() {
+        mProgressBar.setVisibility(View.VISIBLE);
+    }
+
+    protected void hideProgress() {
+        mProgressBar.setVisibility(View.GONE);
     }
 }

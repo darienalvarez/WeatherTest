@@ -86,10 +86,10 @@ public class WeatherInfoFragment extends Fragment implements TaskCallback<Weathe
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        this.mLocationTextView = (TextView) getActivity().findViewById(R.id.locationTextView);
-        this.mZipCodeEditText = (TextInputEditText) getActivity().findViewById(R.id.zipCodeEditText);
-        this.mProgressBar = (ProgressBar) getActivity().findViewById(R.id.progressBar);
-        this.mRecyclerView = (RecyclerView) getActivity().findViewById(R.id.weatherRecyclerView);
+        mLocationTextView = (TextView) getActivity().findViewById(R.id.locationTextView);
+        mZipCodeEditText = (TextInputEditText) getActivity().findViewById(R.id.zipCodeEditText);
+        mProgressBar = (ProgressBar) getActivity().findViewById(R.id.progressBar);
+        mRecyclerView = (RecyclerView) getActivity().findViewById(R.id.weatherRecyclerView);
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
@@ -98,7 +98,7 @@ public class WeatherInfoFragment extends Fragment implements TaskCallback<Weathe
         TextView weatherInfoTextView = (TextView) getActivity().findViewById(R.id.weatherInfoTextView);
         Button updateBtn = (Button) getActivity().findViewById(R.id.updateBtn);
 
-        this.mController = new WeatherInfoController((WeatherInfoActivity) getActivity());
+        mController = new WeatherInfoController((WeatherInfoActivity) getActivity());
 
         if (savedInstanceState == null) {
             // default initialization
