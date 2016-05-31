@@ -35,8 +35,4 @@ public abstract class AbstractTask<P, G, R> extends AsyncTask<P, G, R> {
             }
         }
     }
-
-    public void setCallback(TaskCallback<R> callback) {
-        this.mCallback = callback;
-    }
 }

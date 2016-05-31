@@ -3,9 +3,12 @@ package com.flomio.test.view;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 
@@ -29,6 +32,7 @@ public class UserInfoFragment extends Fragment implements TaskCallback<Location>
 
     private TextInputEditText mNameEditText;
     private TextInputEditText mZipCodeEditText;
+    private Button mSavePreferencesButton;
 
     private ProgressDialog mProgressDialog;
 
@@ -37,6 +41,18 @@ public class UserInfoFragment extends Fragment implements TaskCallback<Location>
     private boolean mRunning;
     private ValidatorHelper mValidatorHelper;
 
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        View view = inflater.inflate(R.layout.fragment_user_info, container, false);
+
+        this.mNameEditText = (TextInputEditText) view.findViewById(R.id.nameEditText);
+        this.mZipCodeEditText = (TextInputEditText) view.findViewById(R.id.zipCodeEditText);
+        this.mSavePreferencesButton = (Button) view.findViewById(R.id.savePreferencesButton);
+
+        return view;
+    }
 
     /**
      * This method will only be called once when the retained
@@ -50,15 +66,16 @@ public class UserInfoFragment extends Fragment implements TaskCallback<Location>
         setRetainInstance(true);
 
         this.mController = new UserInfoController((UserInfoActivity) getActivity());
+    }
 
-        this.mNameEditText = (TextInputEditText) getActivity().findViewById(R.id.nameEditText);
-        this.mZipCodeEditText = (TextInputEditText) getActivity().findViewById(R.id.zipCodeEditText);
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
 
         mValidatorHelper = new ValidatorHelper()
                 .addValidation(mNameEditText, new StringSizeValidator(3), "Your name size must be 3 letters or more")
                 .addValidation(mZipCodeEditText, new StringSizeValidator(3), "Your zip code size must be 3 numbers or more");
 
-        Button mSavePreferencesButton = (Button) getActivity().findViewById(R.id.savePreferencesButton);
         if (mSavePreferencesButton != null) {
             mSavePreferencesButton.setOnClickListener(saveOnClick);
         }
